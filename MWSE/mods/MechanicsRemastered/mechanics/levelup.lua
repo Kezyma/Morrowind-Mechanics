@@ -248,7 +248,21 @@ local function loadedCallback(e)
     inferBaseAttributes()
 end
 
+--- @param e uiActivatedEventData
+local function uiActivatedCallback(e)
+    -- Modify the level up menu to make the bonus numbers visible when there are two digits.
+    local menuList = e.element:findChild(tes3ui.registerID('MenuLevelUp_IconList'))
+    for ix, el in pairs(menuList.children) do
+        if (ix == 2 or ix == 5) then
+            el.paddingRight = 10
+            el.autoWidth = true
+            el:getTopLevelMenu():updateLayout()
+        end
+    end
+end
+
 event.register(tes3.event.loaded, loadedCallback)
 event.register(tes3.event.preLevelUp, preLevelUpCallback)
 event.register(tes3.event.levelUp, levelUpCallback)
+event.register(tes3.event.uiActivated, uiActivatedCallback, {filter = "MenuLevelUp"})
 mwse.log(config.Name .. ' Level Up Module Initialised.')
