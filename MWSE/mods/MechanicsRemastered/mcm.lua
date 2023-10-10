@@ -13,7 +13,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Always Hit',
-        description = 'Hit chance is converted into a damage multiplier. If there is a 40% chance to hit, your attacks will hit 100% of the time, but do 40% of the damage.',
+        description = 'This setting converts the hit chance of weapons into a damage modifier. As long as the hit chance of an attack is >0, the attack will hit. However, the damage of the attack is proportional to the original hit chance. \ne.g. An attack with a 40% chance of hitting will hit 100% of the time, but deal 40% of the damage.',
         variable = mwse.mcm:createTableVariable({
             id = 'CombatEnabled',
             table = config
@@ -22,7 +22,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Health Regeneration',
-        description = 'Outside of combat, health will regenerate at the same rate as resting (0.1 x Endurance per hour).',
+        description = 'This setting enables passive health regeneration. Outside of combat, health will regenerate at the same rate as when resting (10% of Endurance per hour).',
         variable = mwse.mcm:createTableVariable({
             id = 'HealthRegenEnabled',
             table = config
@@ -31,7 +31,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Magicka Regeneration',
-        description = 'Magicka will regenerate at the same rate as resting (0.15 x Intelligence per hour).',
+        description = 'This setting enables passive magicka regeneration. Magicka will regenerate at the same rate as when resting (15% of Intelligence per hour).',
         variable = mwse.mcm:createTableVariable({
             id = 'MagickaRegenEnabled',
             table = config
@@ -40,7 +40,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Uncapped Attribute Bonuses',
-        description = 'Attribute bonuses when levelling up are no longer capped after 10 skill increases and will instead stack. 15 skill increases would provide the bonus for 10 increases, plus the bonus for 5 increases. Limited to the maximum theoretical increases possible at your current level.',
+        description = 'This setting allows attribute bonuses while leveling up to stack. \ne.g. If you have leveled up 15 skills for an attribute, you will get the bonus for 10 skill increases as normal, as well as the bonus for 5 skill increases.\n\nThis is capped to the maximum theoretical skill increases for your current level to prevent over-leveling attributes beyond the base game limits. \ne.g. If you took a +5 bonus to Strength on reaching level 2, the highest bonus you could receive at level 3 is also +5. If you did not take a +5 bonus to Strength at level 2, the highest bonus you could receive at level 3 is +10.',
         variable = mwse.mcm:createTableVariable({
             id = 'LevelupUncappedBonus',
             table = config
@@ -48,8 +48,8 @@ local function modConfigReadyCallback(e)
     })
 
     toggles:createOnOffButton({
-        label = 'Persist Skill Increases Bonuses',
-        description = 'Any skill increases that did not count towards attribute bonuses for attributes that increased when levelling up will persist and be usable on the next level up.',
+        label = 'Persist Skill Increase Bonuses',
+        description = 'This setting persists skill increases towards attribute bonuses across levels. \ne.g. If you have 10 skill increases in Strength skills, but you did not pick Strength as an attribute to increase that level, those 10 skill increases will count towards the bonus next level. If instead, you have 15 skill increases for Strength, but only got a +5 bonus, the remaining 5 skill increases that did not count towards that bonus will be carried over to the next level.',
         variable = mwse.mcm:createTableVariable({
             id = 'LevelupPersistSkills',
             table = config
@@ -57,8 +57,8 @@ local function modConfigReadyCallback(e)
     })
 
     toggles:createOnOffButton({
-        label = 'State Based Health Increase',
-        description = 'When levelling up, health will be recalculated as if the player\'s Endurance was increased by 5 for each possible level. This ignores extra possible increases due to the \'Uncapped Attribtue Bonuses\' setting.',
+        label = 'State-Based Health Increase',
+        description = 'This setting enables a retroactive health calculation that assumes you chose the maximum possible Endurance bonus on each level up.',
         variable = mwse.mcm:createTableVariable({
             id = 'HealthIncreaseEnabled',
             table = config
