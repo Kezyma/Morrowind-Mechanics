@@ -4,8 +4,13 @@ local config = require('MechanicsRemastered.config')
 
 local healthIsInCombat = false
 
-local function healthRegenCalculation(endurance)
+local function healthPerSecond(endurance)
     local rps = (0.1 * endurance) / 60 / 60
+    return rps
+end
+
+local function healthRegenCalculation(endurance)
+    local rps = healthPerSecond(endurance)
     local ts = tes3.findGlobal("timescale").value
     return rps * ts
 end
@@ -64,6 +69,27 @@ local function loadedCallback(e)
     timer.start{iterations = -1, duration = 1, callback = regenHealth}
 end
 
+--- @param e calcRestInterruptEventData
+local function calcRestInterruptCallback(e)
+    if (config.HealthRegenEnabled == true and e.waiting == true) then
+        local totalRestHours = tes3.mobilePlayer.restHoursRemaining
+        local interruptHours = e.hour
+        if (interruptHours < 0) then
+            interruptHours = 0
+        end
+        tes3ui.log("Total Rest: " .. totalRestHours .. " Int Hours:" .. interruptHours)
+        local totalRest = totalRestHours - interruptHours
+        local int = tes3.mobilePlayer.endurance.current
+        local totalRegen = healthPerSecond(int) * 60 * 60 * totalRest
+        local newHealth = tes3.mobilePlayer.health.current + totalRegen
+        if (newHealth > tes3.mobilePlayer.health.base) then
+            newHealth = tes3.mobilePlayer.health.base
+        end
+        tes3.setStatistic{ reference = tes3.player, name = "health", current = newHealth }
+    end
+end
+
+event.register(tes3.event.calcRestInterrupt, calcRestInterruptCallback)
 event.register(tes3.event.combatStarted, combatStartedCallback)
 event.register(tes3.event.combatStopped, combatStoppedCallback)
 event.register(tes3.event.loaded, loadedCallback)

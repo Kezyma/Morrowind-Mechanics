@@ -1,7 +1,7 @@
 -- Configuration
 local config = require('MechanicsRemastered.config')
 local mcm = require('MechanicsRemastered.mcm')
-local version = '0.0.4'
+local version = '0.0.6'
 -- Initialisation
 --- @param e initializedEventData
 local function initializedCallback(e)
@@ -15,6 +15,8 @@ local function initializedCallback(e)
     dofile("MechanicsRemastered.mechanics.healthincrease")
     -- Leveling Overhaul
     dofile("MechanicsRemastered.mechanics.levelup")
+    -- Spellcasting Overhaul
+    dofile("MechanicsRemastered.mechanics.spellcast")
 
     mwse.log(config.Name .. ' v' .. version .. ' Fully Initialised.')
 end

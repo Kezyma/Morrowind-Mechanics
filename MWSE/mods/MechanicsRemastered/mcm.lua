@@ -13,9 +13,18 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Always Hit',
-        description = 'This setting converts the hit chance of weapons into a damage modifier. As long as the hit chance of an attack is >0, the attack will hit. However, the damage of the attack is proportional to the original hit chance. \ne.g. An attack with a 40% chance of hitting will hit 100% of the time, but deal 40% of the damage.',
+        description = 'This setting converts the hit chance of weapons into a damage modifier. As long as the hit chance of an attack is >0, the attack will hit. However, the damage of the attack is proportional to the original hit chance. \ne.g. An attack with a 40% chance of hitting will hit 100% of the time, but deal 40% of the damage.\n\nOn-strike enchantment costs are also scaled based on the hit chance.\ne.g. An on-strike enchant with a 50% hit chance will cost 2x the amount of charge for each hit.',
         variable = mwse.mcm:createTableVariable({
             id = 'CombatEnabled',
+            table = config
+        })
+    })
+
+    toggles:createOnOffButton({
+        label = 'Always Cast',
+        description = 'This setting converts the cast chance of a spell into a magicka cost modifier. As long as the cast chance of a spell is >0, the spell will cast. However, the cost of the spell is increased proportional to the original cast chance. \ne.g. An spell with a 50% chance of casting will cast 100% of the time, but cost 2x the magicka.',
+        variable = mwse.mcm:createTableVariable({
+            id = 'SpellcastEnabled',
             table = config
         })
     })

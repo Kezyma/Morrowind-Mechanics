@@ -199,6 +199,10 @@ local function preLevelUpCallback(e)
                 -- Reduce the bonus to the maximum theoretical at that player level.
                 local maxSkill = levelupInitialAttributes[ix] + calculateMaxAttrIncrease()
                 local maxIncrease = maxSkill - levelupBaseAttributes[ix]
+                -- The max increase is always at least 5.
+                if (maxIncrease < levelupAttributeMultis[10]) then
+                    maxIncrease = levelupAttributeMultis[10]
+                end
                 if (maxIncrease < bonus) then
                     bonus = maxIncrease
                 end
