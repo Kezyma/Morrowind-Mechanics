@@ -67,6 +67,22 @@ local function damageHandToHandCallback(e)
     end
 end
 
+--- @param e damagedEventData
+local function damagedCallback(e)
+    local hitChance = combatHitChances[e.attackerReference.id]
+    local rollStun = math.random(100) > hitChance
+    if (rollStun == false) then
+        e.mobile:hitStun({ cancel = true })
+    end
+end
+--- @param e damagedHandToHandEventData
+local function damagedHandToHandCallback(e)
+    local hitChance = combatHitChances[e.attackerReference.id]
+    local rollStun = math.random(100) > hitChance
+    if (rollStun == false) then
+        e.mobile:hitStun({ cancel = true })
+    end
+end
 
 --- @param e exerciseSkillEventData
 local function exerciseSkillCallback(e)
@@ -112,6 +128,8 @@ local function enchantChargeUseCallback(e)
     end
 end
 
+event.register(tes3.event.damagedHandToHand, damagedHandToHandCallback)
+event.register(tes3.event.damaged, damagedCallback)
 event.register(tes3.event.enchantChargeUse, enchantChargeUseCallback)
 event.register(tes3.event.calcHitChance, calcHitChanceCallback)
 event.register(tes3.event.damage, damageCallback)

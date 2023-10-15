@@ -56,7 +56,8 @@ local function costForMobileActor(spell, cost, caster)
 
         -- Adjust the cost of the spell by the modifier
         local costModifier = 100 / successChance
-        cost = cost * costModifier
+        local newCost = cost * costModifier
+        return math.floor(newCost+0.5)
     end
     return cost
 end
@@ -83,7 +84,7 @@ local function spellCastCallback(e)
     end
 end
 
-local function updateMagicMenu(element)
+local function updateMagicMenu(e)
     if (config.SpellcastEnabled == true) then
         local magicMenu = tes3ui.findMenu("MenuMagic")
         if (not magicMenu) then
@@ -99,11 +100,11 @@ local function updateMagicMenu(element)
         for ix, nameElement in ipairs(spellNameList.children) do
             local listSpell = nameElement:getPropertyObject("MagicMenu_Spell")
             local newCost = costForMobileActor(listSpell, listSpell.magickaCost, player)
-            spellCostList.children[ix].text = newCost
-            spellPercentList.children[ix].text = ""
+            local roundedCost = tostring(newCost)
+            spellCostList.children[ix].text = ""
+            spellPercentList.children[ix].text = roundedCost .. ""
         end
         magicMenu:findChild("MagicMenu_spell_cost_title").text = "Cost"
-        element:getTopLevelMenu():updateLayout()
     end
 end
 
