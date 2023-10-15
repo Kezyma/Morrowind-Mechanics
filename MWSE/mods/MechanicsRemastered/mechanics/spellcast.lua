@@ -34,7 +34,6 @@ local function costForMobileActor(spell, cost, caster)
     local spellSchool = spell:getLeastProficientSchool(caster)
     if (spellSchool >= 0) then
         local spellSkill = schoolToSkill(spellSchool)
-        local spellCost = cost
         
         -- Calculate everything to determine the chance of success.
         local skill = caster:getSkillValue(spellSkill)
@@ -43,8 +42,8 @@ local function costForMobileActor(spell, cost, caster)
         local fatigue = caster.fatigue.current
         local maxFatigue = caster.fatigue.base
         local sound = caster.sound
-        local cost = spell.magickaCost
-        local successChance = spellSuccessChance(skill, willpower, luck, cost, sound, fatigue, maxFatigue)
+        local spellCost = spell.magickaCost
+        local successChance = spellSuccessChance(skill, willpower, luck, spellCost, sound, fatigue, maxFatigue)
 
         -- Limit the success chance from 0 - 100
         if (successChance > 100) then
