@@ -4,7 +4,7 @@ local config = require('MechanicsRemastered.config')
 
 local function magickaPerSecond(int)
     local mult = tes3.findGMST(tes3.gmst.fRestMagicMult).value
-    local rps = (0.15 * int) / 60 / 60
+    local rps = (mult * int) / 60 / 60
     return rps
 end
 
