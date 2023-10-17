@@ -5,31 +5,19 @@ local config = require('MechanicsRemastered.config')
 local levelupBaseAttributes = nil
 local levelupAttributeSkills = nil
 local levelupAttributeMultis = nil
-local levelupAttrGMSTs = nil
+local levelupAttrGMSTs = {
+    tes3.gmst.iLevelUp01Mult,
+    tes3.gmst.iLevelUp02Mult,
+    tes3.gmst.iLevelUp03Mult,
+    tes3.gmst.iLevelUp04Mult,
+    tes3.gmst.iLevelUp05Mult,
+    tes3.gmst.iLevelUp06Mult,
+    tes3.gmst.iLevelUp07Mult,
+    tes3.gmst.iLevelUp08Mult,
+    tes3.gmst.iLevelUp09Mult,
+    tes3.gmst.iLevelUp10Mult
+}
 local levelupInitialAttributes = nil
-
-local function recordAttrMultiGMSTs()
-    levelupAttrGMSTs = {
-        tes3.gmst.iLevelUp01Mult,
-        tes3.gmst.iLevelUp02Mult,
-        tes3.gmst.iLevelUp03Mult,
-        tes3.gmst.iLevelUp04Mult,
-        tes3.gmst.iLevelUp05Mult,
-        tes3.gmst.iLevelUp06Mult,
-        tes3.gmst.iLevelUp07Mult,
-        tes3.gmst.iLevelUp08Mult,
-        tes3.gmst.iLevelUp09Mult,
-        tes3.gmst.iLevelUp10Mult
-    }
-end
-
-local function resetDefaultGMSTs()
-    -- Reset the settings to defaults, in case something breaks badly!
-    for ix, key in pairs(levelupAttrGMSTs) do
-        local gmst = tes3.findGMST(key)
-        gmst.value = gmst.defaultValue
-    end
-end
 
 local function recordAttrMultiGMSTValues()
     levelupAttributeMultis = {
@@ -248,7 +236,6 @@ end
 
 --- @param e loadedEventData
 local function loadedCallback(e)
-    recordAttrMultiGMSTs()
     inferBaseAttributes()
 end
 

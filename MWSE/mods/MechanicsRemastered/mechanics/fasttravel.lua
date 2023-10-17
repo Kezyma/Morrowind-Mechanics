@@ -4,23 +4,11 @@ local K = require('MechanicsRemastered.mechanics.common')
 -- Fast Travel Overhaul
 
 local fastTravelDestination = nil
-local fastTravelIsInCombat = false
-local fastTravelRestStart = false
 
 local fastTravelTravelMarker = "TravelMarker"
 local fastTravelDivineMarker = "DivineMarker"
 local fastTravelTempleMarker = "TempleMarker"
 local fastTravelDoorMarker = "DoorMarker"
-
---- @param e combatStartedEventData
-local function combatStartedCallback(e)
-    fastTravelIsInCombat = true
-end
-
---- @param e combatStoppedEventData
-local function combatStoppedCallback(e)
-    fastTravelIsInCombat = false
-end
 
 local function fastTravelCellValid(cellName)
     local visited = false
@@ -61,8 +49,7 @@ local function fastTravelSkipTime(currentPos, destinationPos)
     local distUnits = math.sqrt((currentPos.r - destinationPos.r)^2 + (currentPos.g - destinationPos.g)^2 + (currentPos.b - destinationPos.b)^2)
     local unitsPerHour = tes3.mobilePlayer.walkSpeed * 60 * 60
     if (unitsPerHour > 0) then
-        local totalHours = (distUnits / unitsPerHour) * tes3.findGlobal("timescale").value
-        tes3ui.log("Time: " .. totalHours .. " Distance: " .. distUnits .. " Speed: " .. unitsPerHour)
+        local totalHours = (distUnits / unitsPerHour) * tes3.findGlobal("timescale").value * config.FastTravelTimescale
         fastTravelStatRegen(totalHours)
         tes3.advanceTime({
             hours = totalHours
@@ -157,7 +144,7 @@ local function fastTravelClick(e)
             if (helpBody) then
                 local helpTxt = helpBody.children[1].text
                 fastTravelDestination = helpTxt
-                if (fastTravelIsInCombat == true) then
+                if (tes3.mobilePlayer.inCombat == true) then
                     tes3ui.showMessageMenu({
                         message = "You cannot fast travel while in combat.",
                         buttons = { { text = tes3.findGMST(tes3.gmst.sOK).value, callback = fastTravelCancel }, }
@@ -207,7 +194,5 @@ local function uiActivatedCallback(e)
     e.element:registerBefore(tes3.uiEvent.preUpdate, updateMapMenu)
 end
 
-event.register(tes3.event.combatStarted, combatStartedCallback)
-event.register(tes3.event.combatStopped, combatStoppedCallback)
 event.register(tes3.event.uiActivated, uiActivatedCallback, { filter = "MenuMap" })
 mwse.log(config.Name .. ' Fast Travel Module Initialised.')

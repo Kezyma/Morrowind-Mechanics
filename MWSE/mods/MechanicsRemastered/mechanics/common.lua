@@ -1,8 +1,11 @@
-local K = {}
+
+local K = {
+    config = require('MechanicsRemastered.config')
+}
 
 function K.healthPerSecond(endurance)
     local rps = (0.1 * endurance) / 60 / 60
-    return rps
+    return rps * K.config.HealthRegenSpeed
 end
 
 function K.healthRegenCalculation(endurance)
@@ -14,7 +17,7 @@ end
 function K.magickaPerSecond(int)
     local mult = tes3.findGMST(tes3.gmst.fRestMagicMult).value
     local rps = (mult * int) / 60 / 60
-    return rps
+    return rps * K.config.MagickaRegenSpeed
 end
 
 function K.magickaRegenCalculation(int)
@@ -24,7 +27,13 @@ function K.magickaRegenCalculation(int)
 end
 
 function K.spellSuccessChance(skill, willpower, luck, cost, sound, fatigue, maxFatigue)
-    return ((skill * 2) + (willpower / 5) + (luck / 10) - cost - sound) * (0.75 + (0.5 * (fatigue / maxFatigue)))
+    local chance = ((skill * 2) + (willpower / 5) + (luck / 10) - cost - sound) * (0.75 + (0.5 * (fatigue / maxFatigue)))
+    if (chance > 100) then
+        chance = 100
+    elseif (chance < 0) then
+        chance = 0
+    end
+    return chance
 end
 
 function K.schoolToSkill(school)
@@ -65,14 +74,6 @@ function K.spellChanceForMobileActor(spell, caster)
         local sound = caster.sound
         local spellCost = spell.magickaCost
         local successChance = K.spellSuccessChance(skill, willpower, luck, spellCost, sound, fatigue, maxFatigue)
-
-        -- Limit the success chance from 0 - 100
-        if (successChance > 100) then
-            successChance = 100
-        end
-        if (successChance < 0) then
-            successChance = 0
-        end
 
         return successChance
     end

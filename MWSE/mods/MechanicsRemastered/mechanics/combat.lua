@@ -26,11 +26,18 @@ local combatDefenceSkills = {
 local function calcHitChanceCallback(e)
     if (config.CombatEnabled == true) then
         -- Record the hit chance for this attack.
-        combatHitChances[e.attacker.id] = e.hitChance
+        local hitChance = e.hitChance
+        if (hitChance > 100) then
+            hitChance = 100
+        elseif (hitChance < 0) then
+            hitChance = 0
+        end
+
+        combatHitChances[e.attacker.id] = hitChance
         if (e.attacker.id == combatPlayerId) then
-            combatLastPlayerChance = e.hitChance
+            combatLastPlayerChance = hitChance
         else
-            combatLastNPCChance = e.hitChance
+            combatLastNPCChance = hitChance
         end
         
         -- Return 100 for a guaranteed hit, unless chance is 0.
@@ -132,8 +139,10 @@ local function enchantChargeUseCallback(e)
             -- Increase charge cost for on-strike based on hit chance.
             local hitChance = combatHitChances[e.caster.id]
             if (hitChance) then
+                tes3ui.log("Original Charge Cost: " .. e.charge)
                 local chargeMod = 100 / hitChance
                 e.charge = e.charge * chargeMod
+                tes3ui.log("New Charge Cost: " .. e.charge)
             end
         end
     end

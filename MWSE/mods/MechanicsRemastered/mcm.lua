@@ -19,7 +19,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Always Cast',
-        description = 'This setting converts the cast chance of a spell into a magicka cost modifier. As long as the cast chance of a spell is >0, the spell will cast. However, the cost of the spell is increased proportional to the original cast chance. \ne.g. An spell with a 50% chance of casting will cast 100% of the time, but cost 2x the magicka.',
+        description = 'This setting converts the cast chance of a spell into a magicka cost modifier. As long as the cast chance of a spell is >0, the spell will cast. However, the cost of the spell is increased proportional to the original cast chance. \ne.g. An spell with a 50% chance of casting will cast 100% of the time, but cost 2x the magicka.\n\nThe time taken to cast the spell will also scale with the original cast chance, so low chance spells take longer.',
         variable = mwse.mcm:createTableVariable({ id = 'SpellcastEnabled', table = config })
     })
 
@@ -29,10 +29,28 @@ local function modConfigReadyCallback(e)
         variable = mwse.mcm:createTableVariable({ id = 'HealthRegenEnabled', table = config })
     })
 
+    toggles:createDecimalSlider({
+        label = 'Health Regeneration Speed',
+        description = 'This setting controls the speed of health regeneration. The default resting speed is 1.',
+        min = 0.01,
+        max = 10,
+        defaultSetting = 1.0,
+        variable = mwse.mcm:createTableVariable({ id = 'HealthRegenSpeed', table = config })
+    })
+
     toggles:createOnOffButton({
         label = 'Magicka Regeneration',
         description = 'This setting enables passive magicka regeneration. Magicka will regenerate at the same rate as when resting (15% of Intelligence per hour).',
         variable = mwse.mcm:createTableVariable({ id = 'MagickaRegenEnabled', table = config })
+    })
+
+    toggles:createDecimalSlider({
+        label = 'Magicka Regeneration Speed',
+        description = 'This setting controls the speed of magicka regeneration. The default resting speed is 1.',
+        min = 0.01,
+        max = 10,
+        defaultSetting = 1.0,
+        variable = mwse.mcm:createTableVariable({ id = 'MagickaRegenSpeed', table = config })
     })
 
     toggles:createOnOffButton({
@@ -57,6 +75,15 @@ local function modConfigReadyCallback(e)
         label = 'Fast Travel',
         description = 'This setting enables fast travel. While not in an interior, not in combat and not over-encumbered, clicking a marker on the world map will give the option to teleport to that location if it has been visited before.',
         variable = mwse.mcm:createTableVariable({ id = 'FastTravelEnabled', table = config })
+    })
+
+    toggles:createDecimalSlider({
+        label = 'Fast Travel Timescale',
+        description = 'This setting controls travel time of fast travel. The default travel speed is 1.',
+        min = 0.01,
+        max = 10,
+        defaultSetting = 1.0,
+        variable = mwse.mcm:createTableVariable({ id = 'FastTravelTimescale', table = config })
     })
 end
 

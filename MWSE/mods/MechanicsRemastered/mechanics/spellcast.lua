@@ -18,12 +18,18 @@ end
 local function spellMagickaUseCallback(e)
     local success = e.spell.alwaysSucceeds
     -- If this spell would succeed anyway, do nothing.
+    tes3ui.log("Base Speed: " .. e.caster.mobile.animationController.animationData.castSpeed)
     if (config.SpellcastEnabled == true and success == false) then
         local spell = e.spell
         local cost = e.cost
         local caster = e.caster.mobile
         local newCost = costForMobileActor(spell, cost, caster)
         e.cost = newCost
+        e.caster.mobile.animationController.animationData.castSpeed = K.spellChanceForMobileActor(spell, caster) / 100
+        tes3ui.log("New Speed: " .. e.caster.mobile.animationController.animationData.castSpeed)
+    else 
+        e.caster.mobile.animationController.animationData.castSpeed = 1
+        tes3ui.log("New Speed: " .. e.caster.mobile.animationController.animationData.castSpeed)
     end
 end
 
@@ -64,6 +70,12 @@ local function uiActivatedCallback(e)
     e.element:registerAfter(tes3.uiEvent.preUpdate, updateMagicMenu)
 end
 
+--- @param e spellCastedEventData
+local function spellCastedCallback(e)
+    e.caster.mobile.animationController.animationData.castSpeed = 1
+end
+
+event.register(tes3.event.spellCasted, spellCastedCallback)
 event.register(tes3.event.uiActivated, uiActivatedCallback, { filter = "MenuMagic" })
 event.register(tes3.event.spellCast, spellCastCallback)
 event.register(tes3.event.spellMagickaUse, spellMagickaUseCallback)

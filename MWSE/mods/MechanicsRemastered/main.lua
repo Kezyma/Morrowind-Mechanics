@@ -1,7 +1,7 @@
 -- Configuration
 local config = require('MechanicsRemastered.config')
 local mcm = require('MechanicsRemastered.mcm')
-local version = '0.1.0'
+local version = '0.1.1'
 -- Initialisation
 --- @param e initializedEventData
 local function initializedCallback(e)
