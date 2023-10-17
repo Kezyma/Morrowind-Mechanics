@@ -1,8 +1,7 @@
 local config = require('MechanicsRemastered.config')
+local K = require('MechanicsRemastered.mechanics.common')
 
 -- Spellcasting Overhaul
-
-local K = require('MechanicsRemastered.mechanics.common')
 
 local function costForMobileActor(spell, cost, caster)
     local calcChance = K.spellChanceForMobileActor(spell, caster)
@@ -53,10 +52,10 @@ local function updateMagicMenu(e)
             local listSpell = nameElement:getPropertyObject("MagicMenu_Spell")
             local newCost = costForMobileActor(listSpell, listSpell.magickaCost, player)
             local roundedCost = tostring(newCost)
-            spellCostList.children[ix].text = ""
-            spellPercentList.children[ix].text = roundedCost .. ""
+            spellCostList.children[ix].text = roundedCost .. ""
+            spellPercentList.children[ix].text = "/" .. listSpell.magickaCost .. ""
         end
-        magicMenu:findChild("MagicMenu_spell_cost_title").text = "Cost"
+        magicMenu:findChild("MagicMenu_spell_cost_title").text = "Cost/Min"
     end
 end
 

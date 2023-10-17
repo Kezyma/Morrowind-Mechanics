@@ -258,7 +258,11 @@ local function uiActivatedCallback(e)
     local menuList = e.element:findChild(tes3ui.registerID('MenuLevelUp_IconList'))
     for ix, el in pairs(menuList.children) do
         if (ix == 2 or ix == 5) then
-            el.paddingRight = 10
+            for ixc, elc in pairs(el.children) do
+                elc.autoWidth = true
+                elc.minWidth = 24
+            end
+            el.minWidth = 24
             el.autoWidth = true
             el:getTopLevelMenu():updateLayout()
         end

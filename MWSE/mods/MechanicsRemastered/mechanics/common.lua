@@ -1,5 +1,28 @@
 local K = {}
 
+function K.healthPerSecond(endurance)
+    local rps = (0.1 * endurance) / 60 / 60
+    return rps
+end
+
+function K.healthRegenCalculation(endurance)
+    local rps = K.healthPerSecond(endurance)
+    local ts = tes3.findGlobal("timescale").value
+    return rps * ts
+end
+
+function K.magickaPerSecond(int)
+    local mult = tes3.findGMST(tes3.gmst.fRestMagicMult).value
+    local rps = (mult * int) / 60 / 60
+    return rps
+end
+
+function K.magickaRegenCalculation(int)
+    local rps = K.magickaPerSecond(int)
+    local ts = tes3.findGlobal("timescale").value
+    return rps * ts
+end
+
 function K.spellSuccessChance(skill, willpower, luck, cost, sound, fatigue, maxFatigue)
     return ((skill * 2) + (willpower / 5) + (luck / 10) - cost - sound) * (0.75 + (0.5 * (fatigue / maxFatigue)))
 end

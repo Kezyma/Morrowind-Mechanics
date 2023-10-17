@@ -1,9 +1,11 @@
 local config = require('MechanicsRemastered.config')
+local K = require('MechanicsRemastered.mechanics.common')
 
 -- Fast Travel Overhaul
 
 local fastTravelDestination = nil
 local fastTravelIsInCombat = false
+local fastTravelRestStart = false
 
 local fastTravelTravelMarker = "TravelMarker"
 local fastTravelDivineMarker = "DivineMarker"
@@ -18,6 +20,54 @@ end
 --- @param e combatStoppedEventData
 local function combatStoppedCallback(e)
     fastTravelIsInCombat = false
+end
+
+local function fastTravelCellValid(cellName)
+    local visited = false
+    local cells = tes3.dataHandler.nonDynamicData.cells
+    for ix, cellItm in ipairs(cells) do
+        if cellItm.displayName == cellName and cellItm.modified == true then
+            visited = true
+        end
+    end
+    return visited
+end
+
+local function fastTravelStatRegen(hours)
+    if (config.HealthRegenEnabled == true) then
+        local int = tes3.mobilePlayer.endurance.current
+        local totalRegen = K.healthPerSecond(int) * 60 * 60 * hours
+        local newHealth = tes3.mobilePlayer.health.current + totalRegen
+        if (newHealth > tes3.mobilePlayer.health.base) then
+            newHealth = tes3.mobilePlayer.health.base
+        end
+        tes3.setStatistic{ reference = tes3.player, name = "health", current = newHealth }
+    end
+    if (config.MagickaRegenEnabled == true) then
+        local atronach = tes3.isAffectedBy({ reference = tes3.mobilePlayer, effect = tes3.effect.stuntedMagicka })
+        if (atronach == false) then
+            local int = tes3.mobilePlayer.intelligence.current
+            local totalRegen = K.magickaPerSecond(int) * 60 * 60 * hours
+            local newMagicka = tes3.mobilePlayer.magicka.current + totalRegen
+            if (newMagicka > tes3.mobilePlayer.magicka.base) then
+                newMagicka = tes3.mobilePlayer.magicka.base
+            end
+            tes3.setStatistic{ reference = tes3.player, name = "magicka", current = newMagicka }
+        end
+    end
+end
+
+local function fastTravelSkipTime(currentPos, destinationPos)
+    local distUnits = math.sqrt((currentPos.r - destinationPos.r)^2 + (currentPos.g - destinationPos.g)^2 + (currentPos.b - destinationPos.b)^2)
+    local unitsPerHour = tes3.mobilePlayer.walkSpeed * 60 * 60
+    if (unitsPerHour > 0) then
+        local totalHours = (distUnits / unitsPerHour) * tes3.findGlobal("timescale").value
+        tes3ui.log("Time: " .. totalHours .. " Distance: " .. distUnits .. " Speed: " .. unitsPerHour)
+        fastTravelStatRegen(totalHours)
+        tes3.advanceTime({
+            hours = totalHours
+        })
+    end
 end
 
 local function fastTravelMove()
@@ -51,12 +101,16 @@ local function fastTravelMove()
         end
 
         if (travel ~= nil) then
+            fastTravelSkipTime(tes3.mobilePlayer.reference.position, travel.position)
             tes3.positionCell({ position = travel.position, orientation = travel.orientation })
         elseif (divine ~= nil) then
+            fastTravelSkipTime(tes3.mobilePlayer.reference.position, divine.position)
             tes3.positionCell({ position = divine.position, orientation = divine.orientation })
         elseif (temple ~= nil) then
+            fastTravelSkipTime(tes3.mobilePlayer.reference.position, temple.position)
             tes3.positionCell({ position = temple.position, orientation = temple.orientation })
         elseif (door ~= nil) then
+            fastTravelSkipTime(tes3.mobilePlayer.reference.position, door.position)
             tes3.positionCell({ position = door.position, orientation = door.orientation })
         else
             -- If no viable locations are found, move to the center of the cells.
@@ -83,7 +137,9 @@ local function fastTravelMove()
             if (minX ~= nil) then
                 local midX = (minX + maxX) / 2
                 local midY = (minY + maxY) / 2
-                tes3.positionCell({ position = { (midX * 8192) + 4096, (midY * 8192) + 4096 } })
+                local newPos = { r = (midX * 8192) + 4096, g = (midY * 8192) + 4096, b = tes3.mobilePlayer.reference.position.b }
+                fastTravelSkipTime(tes3.mobilePlayer.reference.position, newPos)
+                tes3.positionCell({ position = newPos })
             end
         end
     end
@@ -106,9 +162,19 @@ local function fastTravelClick(e)
                         message = "You cannot fast travel while in combat.",
                         buttons = { { text = tes3.findGMST(tes3.gmst.sOK).value, callback = fastTravelCancel }, }
                     })
+                elseif (tes3.mobilePlayer.encumbrance.normalized > 1) then
+                    tes3ui.showMessageMenu({
+                        message = "You cannot fast travel while over-encumbered.",
+                        buttons = { { text = tes3.findGMST(tes3.gmst.sOK).value, callback = fastTravelCancel }, }
+                    })
                 elseif (tes3.mobilePlayer.cell.isOrBehavesAsExterior == false) then
                     tes3ui.showMessageMenu({
                         message = "You cannot fast travel from the current location.",
+                        buttons = { { text = tes3.findGMST(tes3.gmst.sOK).value, callback = fastTravelCancel }, }
+                    })
+                elseif (fastTravelCellValid(fastTravelDestination) == false) then
+                    tes3ui.showMessageMenu({
+                        message = "You have not visited this location yet.",
                         buttons = { { text = tes3.findGMST(tes3.gmst.sOK).value, callback = fastTravelCancel }, }
                     })
                 else

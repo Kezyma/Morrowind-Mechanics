@@ -1,18 +1,7 @@
 local config = require('MechanicsRemastered.config')
+local K = require('MechanicsRemastered.mechanics.common')
 
 -- Magicka Regen
-
-local function magickaPerSecond(int)
-    local mult = tes3.findGMST(tes3.gmst.fRestMagicMult).value
-    local rps = (mult * int) / 60 / 60
-    return rps
-end
-
-local function magickaRegenCalculation(int)
-    local rps = magickaPerSecond(int)
-    local ts = tes3.findGlobal("timescale").value
-    return rps * ts
-end
 
 local function regenMagicka()
     if (config.MagickaRegenEnabled == true) then
@@ -22,7 +11,7 @@ local function regenMagicka()
         -- If magicka isn't full and the player does not have the atronach sign, run regen.
         if (atronach == false and tes3.mobilePlayer.magicka.current < tes3.mobilePlayer.magicka.base) then
             local int = tes3.mobilePlayer.intelligence.current
-            local regen = magickaRegenCalculation(int)
+            local regen = K.magickaRegenCalculation(int)
 
             local newMagicka = tes3.mobilePlayer.magicka.current + regen
             if (newMagicka > tes3.mobilePlayer.magicka.base) then
@@ -40,7 +29,7 @@ local function regenMagicka()
                         local npcatronach = tes3.isAffectedBy({ reference = ref, effect = tes3.effect.stuntedMagicka })
                         if (npcatronach == false) then
                             local npcint = ref.mobile.intelligence.current
-                            local npcregen = magickaRegenCalculation(npcint)
+                            local npcregen = K.magickaRegenCalculation(npcint)
                 
                             local newNpcMagicka = ref.mobile.magicka.current + npcregen
                             if (newNpcMagicka > ref.mobile.magicka.base) then
@@ -68,7 +57,7 @@ local function calcRestInterruptCallback(e)
             end
             local totalRest = totalRestHours - interruptHours
             local int = tes3.mobilePlayer.intelligence.current
-            local totalRegen = magickaPerSecond(int) * 60 * 60 * totalRest
+            local totalRegen = K.magickaPerSecond(int) * 60 * 60 * totalRest
             local newMagicka = tes3.mobilePlayer.magicka.current + totalRegen
             if (newMagicka > tes3.mobilePlayer.magicka.base) then
                 newMagicka = tes3.mobilePlayer.magicka.base

@@ -55,7 +55,7 @@ local function modConfigReadyCallback(e)
 
     toggles:createOnOffButton({
         label = 'Fast Travel',
-        description = 'This setting enables fast travel. While not in an interior and not in combat, clicking a marker on the world map will give the option to teleport to that location.',
+        description = 'This setting enables fast travel. While not in an interior, not in combat and not over-encumbered, clicking a marker on the world map will give the option to teleport to that location if it has been visited before.',
         variable = mwse.mcm:createTableVariable({ id = 'FastTravelEnabled', table = config })
     })
 end
