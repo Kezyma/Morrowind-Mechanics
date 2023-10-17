@@ -77,7 +77,6 @@ local function calcRestInterruptCallback(e)
         if (interruptHours < 0) then
             interruptHours = 0
         end
-        tes3ui.log("Total Rest: " .. totalRestHours .. " Int Hours:" .. interruptHours)
         local totalRest = totalRestHours - interruptHours
         local int = tes3.mobilePlayer.endurance.current
         local totalRegen = healthPerSecond(int) * 60 * 60 * totalRest

@@ -6,7 +6,8 @@ local defaultConfig = {
     MagickaRegenEnabled = true,
     LevelupUncappedBonus = true,
     LevelupPersistSkills = true,
-    HealthIncreaseEnabled = true
+    HealthIncreaseEnabled = true,
+    FastTravelEnabled = true
 }
 
 return mwse.loadConfig("MechanicsRemastered", defaultConfig)

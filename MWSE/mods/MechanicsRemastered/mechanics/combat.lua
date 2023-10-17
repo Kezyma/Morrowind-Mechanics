@@ -6,7 +6,6 @@ local combatPlayerId = "PlayerSaveGame"
 local combatLastPlayerChance = nil
 local combatLastNPCChance = nil
 local combatHitChances = {}
-local combatGodMode = false
 local combatAttackSkills = {
     4, --tes3.skill.bluntWeapon,
     5, --tes3.skill.longBlade,
@@ -46,10 +45,12 @@ local function damageCallback(e)
     if (config.CombatEnabled == true and e.source == tes3.damageSource.attack) then
         -- Modify the damage based on the hit chance.
         local hitChance = combatHitChances[e.attackerReference.id]
-        if (hitChance > 0) then
-            e.damage = (e.damage * hitChance) / 100
-        else 
-            e.damage = 0
+        if (hitChance) then
+            if (hitChance > 0) then
+                e.damage = (e.damage * hitChance) / 100
+            else 
+                e.damage = 0
+            end
         end
     end
 end
@@ -59,28 +60,38 @@ local function damageHandToHandCallback(e)
     if (config.CombatEnabled == true) then
         -- Modify the damage based on the hit chance.
         local hitChance = combatHitChances[e.attackerReference.id]
-        if (hitChance > 0) then
-            e.fatigueDamage = (e.fatigueDamage * hitChance) / 100
-        else 
-            e.fatigueDamage = 0
+        if (hitChance) then
+            if (hitChance > 0) then
+                e.fatigueDamage = (e.fatigueDamage * hitChance) / 100
+            else 
+                e.fatigueDamage = 0
+            end
         end
     end
 end
 
 --- @param e damagedEventData
 local function damagedCallback(e)
-    local hitChance = combatHitChances[e.attackerReference.id]
-    local rollStun = math.random(100) > hitChance
-    if (rollStun == false) then
-        e.mobile:hitStun({ cancel = true })
+    if (config.CombatEnabled == true and e.source == tes3.damageSource.attack) then
+        local hitChance = combatHitChances[e.attackerReference.id]
+        if (hitChance) then
+            local rollStun = math.random(100) > hitChance
+            if (rollStun == false) then
+                e.mobile:hitStun({ cancel = true })
+            end
+        end
     end
 end
 --- @param e damagedHandToHandEventData
 local function damagedHandToHandCallback(e)
-    local hitChance = combatHitChances[e.attackerReference.id]
-    local rollStun = math.random(100) > hitChance
-    if (rollStun == false) then
-        e.mobile:hitStun({ cancel = true })
+    if (config.CombatEnabled == true) then
+        local hitChance = combatHitChances[e.attackerReference.id]
+        if (hitChance) then
+            local rollStun = math.random(100) > hitChance
+            if (rollStun == false) then
+                e.mobile:hitStun({ cancel = true })
+            end
+        end
     end
 end
 
