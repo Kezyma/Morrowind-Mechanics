@@ -8,6 +8,9 @@ local function costForMobileActor(spell, cost, caster)
     if (calcChance) then
         -- Adjust the cost of the spell by the modifier
         local costModifier = 100 / calcChance
+        if (costModifier > 10) then
+            costModifier = 10
+        end
         local newCost = cost * costModifier
         return math.floor(newCost+0.5)
     end
@@ -25,11 +28,18 @@ local function spellMagickaUseCallback(e)
         local caster = e.caster.mobile
         local newCost = costForMobileActor(spell, cost, caster)
         e.cost = newCost
-        e.caster.mobile.animationController.animationData.castSpeed = K.spellChanceForMobileActor(spell, caster) / 100
-        tes3ui.log("New Speed: " .. e.caster.mobile.animationController.animationData.castSpeed)
+        if (newCost <= e.caster.mobile.magicka.current) then
+            local newSpeed = K.spellChanceForMobileActor(spell, caster) / 100
+            if (newSpeed < 0.1) then
+                newSpeed = 0.1
+            end
+            e.caster.mobile.animationController.animationData.castSpeed = newSpeed
+        else
+            e.caster.mobile.animationController.animationData.castSpeed = 1
+        end
+        
     else 
         e.caster.mobile.animationController.animationData.castSpeed = 1
-        tes3ui.log("New Speed: " .. e.caster.mobile.animationController.animationData.castSpeed)
     end
 end
 

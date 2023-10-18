@@ -141,6 +141,9 @@ local function enchantChargeUseCallback(e)
             if (hitChance) then
                 tes3ui.log("Original Charge Cost: " .. e.charge)
                 local chargeMod = 100 / hitChance
+                if (chargeMod > 10) then
+                    chargeMod = 10
+                end
                 e.charge = e.charge * chargeMod
                 tes3ui.log("New Charge Cost: " .. e.charge)
             end
