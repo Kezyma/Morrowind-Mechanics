@@ -1,7 +1,7 @@
 -- Configuration
 local config = require('MechanicsRemastered.config')
 local mcm = require('MechanicsRemastered.mcm')
-local version = '0.1.1'
+local version = '0.1.2'
 -- Initialisation
 --- @param e initializedEventData
 local function initializedCallback(e)
@@ -21,6 +21,10 @@ local function initializedCallback(e)
     -- Fast Travel Overhaul
     dofile("MechanicsRemastered.mechanics.fasttravel")
 
+    -- TODO: Quick Loot Menu
+    -- TODO: Sprinting
+    -- TODO: Spell Resistance
+    
     mwse.log(config.Name .. ' v' .. version .. ' Fully Initialised.')
 end
 event.register(tes3.event.initialized, initializedCallback)

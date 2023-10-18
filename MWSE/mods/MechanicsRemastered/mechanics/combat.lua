@@ -1,4 +1,5 @@
 local config = require('MechanicsRemastered.config')
+local K = require('MechanicsRemastered.mechanics.common')
 
 -- Combat Overhaul
 
@@ -27,11 +28,7 @@ local function calcHitChanceCallback(e)
     if (config.CombatEnabled == true) then
         -- Record the hit chance for this attack.
         local hitChance = e.hitChance
-        if (hitChance > 100) then
-            hitChance = 100
-        elseif (hitChance < 0) then
-            hitChance = 0
-        end
+        hitChance = K.limitToRange(hitChance, 0, 100)
 
         combatHitChances[e.attacker.id] = hitChance
         if (e.attacker.id == combatPlayerId) then
@@ -139,13 +136,9 @@ local function enchantChargeUseCallback(e)
             -- Increase charge cost for on-strike based on hit chance.
             local hitChance = combatHitChances[e.caster.id]
             if (hitChance) then
-                tes3ui.log("Original Charge Cost: " .. e.charge)
                 local chargeMod = 100 / hitChance
-                if (chargeMod > 10) then
-                    chargeMod = 10
-                end
+                chargeMod = K.limitToRange(chargeMod, 1, 100)
                 e.charge = e.charge * chargeMod
-                tes3ui.log("New Charge Cost: " .. e.charge)
             end
         end
     end

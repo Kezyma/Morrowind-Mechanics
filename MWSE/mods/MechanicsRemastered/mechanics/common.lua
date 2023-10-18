@@ -3,6 +3,15 @@ local K = {
     config = require('MechanicsRemastered.config')
 }
 
+function K.limitToRange(val, min, max)
+    if (val > max) then
+        val = max
+    elseif (val < min) then
+        val = min
+    end
+    return val
+end
+
 function K.healthPerSecond(endurance)
     local rps = (0.1 * endurance) / 60 / 60
     return rps * K.config.HealthRegenSpeed
@@ -28,11 +37,7 @@ end
 
 function K.spellSuccessChance(skill, willpower, luck, cost, sound, fatigue, maxFatigue)
     local chance = ((skill * 2) + (willpower / 5) + (luck / 10) - cost - sound) * (0.75 + (0.5 * (fatigue / maxFatigue)))
-    if (chance > 100) then
-        chance = 100
-    elseif (chance < 0) then
-        chance = 0
-    end
+    chance = K.limitToRange(chance, 0, 100)
     return chance
 end
 
